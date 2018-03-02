@@ -1,8 +1,8 @@
 #include "Reducer.h"
 #include <iostream>
 #include <vector>
-#include <queue>          // std::queue
-#include <utility>      // std::pair, std::make_pair
+#include <queue> // std::queue
+#include <utility> // std::pair, std::make_pair
 using namespace std;
 
 bool revise(ConnectionMap &m, int x1, int x2){
@@ -41,16 +41,9 @@ bool ac3(ConnectionMap &m){
 				if (m.getXY(currentIndex, i)){
 					//then i is a neighbor of currentIndex. add him to neighbors
 					std::pair <int,int> neighborPair; 
-
 					neighborPair.first = currentIndex;
 					neighborPair.second = i;
-
 					arcs.push(neighborPair);
-
-					/*neighborPair.first = i;
-					neighborPair.second = currentIndex;
-
-					arcs.push(neighborPair);*/
 				}
 			}
 		}
@@ -67,18 +60,15 @@ bool ac3(ConnectionMap &m){
 				return false;
 			}else{
 				//add all of x1s neighbors to the queue
-
 				//Find out who all of x1's neighbors are
 				for (int i = 0; i < m.getSize(); i++){
 					//don't add yourself as a neightbor
 					if(i != neighborPair.first){
 						if (m.getXY(neighborPair.first, i)){
 							//then i is a neighbor of x1. add him to neighbors
-
 							std::pair <int,int> x1sNeighbor; 
 							x1sNeighbor.first = i;
 							x1sNeighbor.second = neighborPair.first;
-
 							arcs.push(x1sNeighbor);
 						}
 					}
@@ -91,7 +81,8 @@ bool ac3(ConnectionMap &m){
 	//go through all of the indicies and find the first one that doesn't have a color set yet
 	for (int i = 0; i < m.getSize(); i++){
 		vector<unsigned int> possibleColors = m.getPossibleColors(i);
-		if (possibleColors.size() > 1){
+
+		while (possibleColors.size() > 1){
 			ConnectionMap modifiedConnectionMap = m;
 			modifiedConnectionMap.setColor(i, possibleColors.front());
 
@@ -100,35 +91,15 @@ bool ac3(ConnectionMap &m){
 			if (ac3(modifiedConnectionMap) == false){
 				m.removeColorFrom(i, possibleColors.front());
 				possibleColors = m.getPossibleColors(i);
-				if (possibleColors.size() > 1){
-					m.setColor(i, possibleColors.front());
-					ac3(m);
-				}
 			}else{
 				//We found a solution
+				//That was a good color that we picked, lets lock it in permanently
+				m.setColor(i, possibleColors.front());
 				return true;
 			}
-			break;
-			/*for (int j = 0; j < possibleColors.size(); j++){
-				ConnectionMap modifiedConnectionMap = m;
-				modifiedConnectionMap.setColor(j, possibleColors[i]);
-				ac3(modifiedConnectionMap);
-			}
-			break;*/
-
-
 		}
 	}
-
-	//Check to see if all of the indicies have a color locked in.
-	//If so, then we have found a solution
-	/*for(int i = 0; i < m.getSize(); i++){
-		if (m.getPossibleColors(i).size() != 1){
-			return false;
-		}
-	}*/
 	return true;
-	
 }
 
 // Takes a connection map and an index to which it should assign a value.
@@ -138,43 +109,10 @@ bool ac3(ConnectionMap &m){
 bool backtrack(ConnectionMap &m, int assign)
 {
 
-	////Make a copy of our connection map that will be modified
-	//ConnectionMap modifiedConnectionMap = m;
-
-	////vector that holds assign's neighbors
-	//vector<int> neighbors;
-
-	////Find out who all of assign's neighbors are and add them to neighbors vector
-	//for (int i = 0; i < modifiedConnectionMap.getSize(); i++){
-	//	//don't add yourself as a neightbor
-	//	if(i != assign){
-	//		if (modifiedConnectionMap.getXY(assign, i)){
-	//			//then i is a neighbor of assign. add him to neighbors
-	//			neighbors.push_back(i);
-	//		}
-	//	}
-	//}
-
-	////now we know all of the neighbors of assign
-	////remove all of the neighbor's current colors from assign's list of possible colors
-	//for (int i = 0; i < neighbors.size(); i++){
-	//	vector<unsigned int> neighborsPossibleColors = modifiedConnectionMap.getPossibleColors(neighbors[i]);
-	//	if (neighborsPossibleColors.size() == 1){
-	//		//Then that neighbor has a color locked in
-	//		//remove that color from assign's vector of possible colors
-	//		modifiedConnectionMap.removeColorFrom(assign, neighborsPossibleColors.front());
-	//	}
-	//}
-
-	////if assign only has one color available in possible colors, lock that in as his color
-	//vector<unsigned int> assignsPossibleColors = modifiedConnectionMap.getPossibleColors(assign);
-	//if (assignsPossibleColors.size() == 1){
-	//	modifiedConnectionMap.setColor(assign, assignsPossibleColors.front());
-	//}
-
-
-	m.setColor(0,2);
-
+	vector<unsigned int> possibleColors = m.getPossibleColors(assign);
+	if (possibleColors.size() > 1){
+		m.setColor(assign, possibleColors.front());
+	}
 
 	return ac3(m);
 }
