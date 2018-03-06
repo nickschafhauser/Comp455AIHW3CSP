@@ -83,7 +83,7 @@ bool ac3(ConnectionMap &m){
 		vector<unsigned int> possibleColors = m.getPossibleColors(i);
 
 		while (possibleColors.size() > 1){
-			ConnectionMap modifiedConnectionMap = m;
+			ConnectionMap modifiedConnectionMap = ConnectionMap(m);
 			modifiedConnectionMap.setColor(i, possibleColors.front());
 
 			//then that color we picked ended up not providing a complete solution
@@ -91,10 +91,16 @@ bool ac3(ConnectionMap &m){
 			if (ac3(modifiedConnectionMap) == false){
 				m.removeColorFrom(i, possibleColors.front());
 				possibleColors = m.getPossibleColors(i);
+
+				//Then we just locked in an answer without making sure there were not any contradictions
+				if(possibleColors.size() == 1){
+					return false;
+				}
 			}else{
 				//We found a solution
 				//That was a good color that we picked, lets lock it in permanently
-				m.setColor(i, possibleColors.front());
+				//m.setColor(i, possibleColors.front());
+				m = modifiedConnectionMap;
 				return true;
 			}
 		}
@@ -110,8 +116,13 @@ bool backtrack(ConnectionMap &m, int assign)
 {
 
 	vector<unsigned int> possibleColors = m.getPossibleColors(assign);
-	if (possibleColors.size() > 1){
-		m.setColor(assign, possibleColors.front());
+	if (possibleColors.size() > 0){
+		//m.setColor(assign, possibleColors.front());
+		m.setColor(assign, 2);
+	}else{
+		//then the user is trying to solve for a scenario where there are no colors to choose from
+		//that is unsolvable.
+		return false;
 	}
 
 	return ac3(m);
