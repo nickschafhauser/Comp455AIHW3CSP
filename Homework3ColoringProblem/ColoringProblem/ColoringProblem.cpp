@@ -6,7 +6,7 @@ using namespace std;
 // DO NOT MODIFY (except to test different maps)
 int main()
 {
-	ConnectionMap c(4, 3, "data.txt");
+	ConnectionMap c(6, 3, "data.txt");
 	if (backtrack(c, 0))
 	{
 		cout << "Solved!" << endl;

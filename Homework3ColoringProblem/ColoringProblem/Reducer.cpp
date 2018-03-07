@@ -117,8 +117,8 @@ bool backtrack(ConnectionMap &m, int assign)
 
 	vector<unsigned int> possibleColors = m.getPossibleColors(assign);
 	if (possibleColors.size() > 0){
-		//m.setColor(assign, possibleColors.front());
-		m.setColor(assign, 2);
+		m.setColor(assign, possibleColors.front());
+		//m.setColor(assign, 2);
 	}else{
 		//then the user is trying to solve for a scenario where there are no colors to choose from
 		//that is unsolvable.
